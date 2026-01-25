@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35913.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stepik_asp", "stepik_asp\stepik_asp.csproj", "{A5B4096E-D6C7-40AC-879B-3F454C1284EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stepik.Db", "stepik.Db\stepik.Db.csproj", "{2407507B-755F-4F88-9FF8-0404EDB2B6F3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5B4096E-D6C7-40AC-879B-3F454C1284EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5B4096E-D6C7-40AC-879B-3F454C1284EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5B4096E-D6C7-40AC-879B-3F454C1284EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5B4096E-D6C7-40AC-879B-3F454C1284EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2407507B-755F-4F88-9FF8-0404EDB2B6F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2407507B-755F-4F88-9FF8-0404EDB2B6F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2407507B-755F-4F88-9FF8-0404EDB2B6F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2407507B-755F-4F88-9FF8-0404EDB2B6F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F447646C-87AC-4920-87D7-5707F7645DA2}
+	EndGlobalSection
+EndGlobal

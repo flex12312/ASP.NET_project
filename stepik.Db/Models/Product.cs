@@ -1,0 +1,25 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace stepik.Db.Models
+{
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public decimal Cost { get; set; }
+        public string? Description { get; set; }
+        public string? ImagePath { get; set; }
+        public List<CartItem>? CartItems { get; set; }
+
+
+        public Product() { }
+
+        public Product(int id, string name, decimal cost, string? description)
+        {
+            Id = id;
+            Name = name;
+            Cost = cost;
+            Description = description;
+        }
+    }
+}
