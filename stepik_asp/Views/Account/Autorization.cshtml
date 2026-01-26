@@ -43,7 +43,8 @@
         <a class="btn text-decoration-underline"
            asp-area=""
            asp-controller="Account"
-           asp-action="Registration">
+           asp-action="Registration"
+           asp-route-returnUrl="@Model.ReturnUrl">
             Регистрация нового пользователя
         </a>
     </div>

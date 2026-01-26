@@ -46,9 +46,19 @@ namespace stepik_asp.Controllers
             return View(model);
         }
 
-        public IActionResult Registration()
+        public IActionResult Registration(string returnUrl)
         {
-            return View();
+            return View(new RegistrationViewModel
+            {
+                UserName = "",        
+                Email = "",
+                Password = "",
+                ConfirmPassword = "",
+                Phone = "",
+                FirstName = "",
+                LastName = "",
+                ReturnUrl = returnUrl  
+            });
         }
 
         [HttpPost]
@@ -87,7 +97,7 @@ namespace stepik_asp.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    return Redirect(model.ReturnUrl ?? "/Home");
                 }
                 foreach (var error in result.Errors)
                     ModelState.AddModelError("", error.Description);

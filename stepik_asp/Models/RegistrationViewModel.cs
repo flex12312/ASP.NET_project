@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace stepik_asp.Models
 {
@@ -7,14 +9,14 @@ namespace stepik_asp.Models
         [Display(Name = "Имя пользователя", Prompt = "Имя пользователя")]
         [Required(ErrorMessage = "Не указано имя пользователя")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "От 3 до 50 символов")]
-        public required string UserName { get; set; } // ← ДОБАВЬ ЭТО ПОЛЕ
+        public required string UserName { get; set; } 
 
         [Display(Name = "Email", Prompt = "Ваш email")]
         [Required(ErrorMessage = "Не указан email")]
         [DataType(DataType.EmailAddress)]
         [EmailAddress(ErrorMessage = "Введите валидный email")]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "Email должен быть от {2} до {1} символов")]
-        public required string Email { get; set; } // ← Поменяй Login на Email
+        public required string Email { get; set; } 
 
         [Display(Name = "Пароль", Prompt = "Ваш пароль")]
         [Required(ErrorMessage = "Не указан пароль")]
@@ -46,5 +48,8 @@ namespace stepik_asp.Models
         [DataType(DataType.Text)]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Фамилия должна быть от {2} до {1} символов")]
         public required string LastName { get; set; }
+
+        [ValidateNever]
+        public string ReturnUrl {  get; set; }
     }
 }
