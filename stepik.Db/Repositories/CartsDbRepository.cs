@@ -30,7 +30,6 @@ namespace stepik.Db.Repositories
         public void Add(Product product, string? userId, string? guestId)
         {
             var existingCart = TryGetByUserId(userId, guestId);
-
             if (existingCart == null)
             {
                 existingCart = new Cart()
@@ -41,9 +40,7 @@ namespace stepik.Db.Repositories
                 };
                 _databaseContext.Carts.Add(existingCart);
             }
-
-            var existingCartItem = existingCart.Items
-                .FirstOrDefault(item => item.Product.Id == product.Id);
+            var existingCartItem = existingCart.Items.FirstOrDefault(item => item.Product.Id == product.Id);
 
             if (existingCartItem == null)
             {
@@ -65,10 +62,7 @@ namespace stepik.Db.Repositories
         public void Decrease(int productId, string? userId, string? guestId)
         {
             var existingCart = TryGetByUserId(userId, guestId);
-
-            var existingCartItem = existingCart?.Items
-                .FirstOrDefault(item => item.Product.Id == productId);
-
+            var existingCartItem = existingCart?.Items.FirstOrDefault(item => item.Product.Id == productId);
             if (existingCartItem == null)
             {
                 return;
@@ -97,12 +91,8 @@ namespace stepik.Db.Repositories
         }
         public void Merge(string guestId, string userId)
         {
-            var guestCart = _databaseContext.Carts
-                .Include(x => x.Items)
-                .FirstOrDefault(x => x.GuestId == guestId);
-            var userCart = _databaseContext.Carts
-                .Include(x => x.Items)
-                .FirstOrDefault(x => x.UserId == userId);
+            var guestCart = _databaseContext.Carts.Include(x => x.Items).FirstOrDefault(x => x.GuestId == guestId);
+            var userCart = _databaseContext.Carts.Include(x => x.Items).FirstOrDefault(x => x.UserId == userId);
             if (guestCart == null) return; 
             if (userCart == null)
             {
@@ -113,8 +103,7 @@ namespace stepik.Db.Repositories
             {
                 foreach (var guestItem in guestCart.Items)
                 {
-                    var userItem = userCart.Items
-                        .FirstOrDefault(x => x.Product.Id == guestItem.Product.Id);
+                    var userItem = userCart.Items.FirstOrDefault(x => x.Product.Id == guestItem.Product.Id);
                     if (userItem != null)
                     {
                         userItem.Quantity += guestItem.Quantity;

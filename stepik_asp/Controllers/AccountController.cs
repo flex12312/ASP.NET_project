@@ -12,12 +12,19 @@ namespace stepik_asp.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ICartsRepository _cartsRepository;
+        private readonly IComparisonRepository _comparisonRepository;
+        private readonly IFavoritesRepository _favoriteRepository;
 
-        public AccountController(UserManager<User> userManager,SignInManager<User> signInManager,ICartsRepository cartsRepository) 
+
+        public AccountController(UserManager<User> userManager,SignInManager<User> signInManager,
+            ICartsRepository cartsRepository, IComparisonRepository comparisonRepository,
+            IFavoritesRepository favoriteRepository) 
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _cartsRepository = cartsRepository;
+            _comparisonRepository = comparisonRepository;
+            _favoriteRepository = favoriteRepository;
         }
 
         public IActionResult Autorization(string returnUrl)
@@ -48,8 +55,11 @@ namespace stepik_asp.Controllers
                     if (!string.IsNullOrEmpty(guestId))
                     {
                         _cartsRepository.Merge(guestId, user.Id); 
-                        Response.Cookies.Delete("GuestId");       
+                        _favoriteRepository.Merge(guestId, user.Id);
+                        _comparisonRepository.Merge(guestId, user.Id);
+                        Response.Cookies.Delete("GuestId");
                     }
+
                     return Redirect(model.ReturnUrl ?? "/");
                 }
             }
@@ -113,6 +123,8 @@ namespace stepik_asp.Controllers
                     if (!string.IsNullOrEmpty(guestId))
                     {
                         _cartsRepository.Merge(guestId, user.Id);
+                        _favoriteRepository.Merge(guestId, user.Id);      
+                        _comparisonRepository.Merge(guestId, user.Id);
                         Response.Cookies.Delete("GuestId");
                     }
                     return Redirect(model.ReturnUrl ?? "/Home");

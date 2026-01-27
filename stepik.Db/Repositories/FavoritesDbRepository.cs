@@ -14,12 +14,12 @@ namespace stepik.Db.Repositories
             _databaseContext = databaseContext;
         }
 
-        public void Add(Product product, string userId)
+        public void Add(Product product, string? userId, string? guestId)
         {
-            var favorite = TryGetByUserId(userId);
+            var favorite = TryGetByUserId(userId, guestId);
             if (favorite == null)
             {
-                favorite = new Favorite() {  Id = Guid.NewGuid() , Items = [product], UserId = userId };
+                favorite = new Favorite() {  Id = Guid.NewGuid() , Items = [product], UserId = userId, GuestId = userId == null ? guestId : null };
                 _databaseContext.Favorites.Add(favorite);
             }
             else
@@ -34,9 +34,9 @@ namespace stepik.Db.Repositories
             _databaseContext.SaveChanges();
         }
 
-        public void Clear(string userId)
+        public void Clear(string? userId, string? guestId)
         {
-            var favorite = TryGetByUserId(userId);
+            var favorite = TryGetByUserId(userId, guestId);
             if (favorite != null)
             {
                 _databaseContext.Favorites.Remove(favorite);
@@ -44,16 +44,40 @@ namespace stepik.Db.Repositories
             }
         }
 
-        public void Delete(int productId, string userId)
+        public void Delete(int productId, string? userId, string? guestId)
         {
-            var favorite = TryGetByUserId(userId);
+            var favorite = TryGetByUserId(userId, guestId);
             favorite?.Items.RemoveAll(fav => fav.Id == productId);
             _databaseContext.SaveChanges();
         }
 
-        public Favorite? TryGetByUserId(string userId)
+        public Favorite? TryGetByUserId(string? userId, string? guestId)
         {
-            return _databaseContext.Favorites.Include(x => x.Items).FirstOrDefault(x => x.UserId == userId);
+            return _databaseContext.Favorites.Include(x => x.Items).FirstOrDefault(x => (userId != null && x.UserId == userId) ||(guestId != null && x.GuestId == guestId));
+        }
+        public void Merge(string? guestId, string? userId)
+        {
+            var guestComparison = _databaseContext.Favorites.Include(x => x.Items).FirstOrDefault(x => x.GuestId == guestId);
+            var userComparison = _databaseContext.Favorites.Include(x => x.Items).FirstOrDefault(x => x.UserId == userId);
+
+            if (guestComparison == null) return;
+            if (userComparison == null)
+            {
+                guestComparison.UserId = userId;
+                guestComparison.GuestId = null;
+            }
+            else
+            {
+                foreach (var item in guestComparison.Items)
+                {
+                    if (!userComparison.Items.Any(x => x.Id == item.Id))
+                    {
+                        userComparison.Items.Add(item);
+                    }
+                }
+                _databaseContext.Favorites.Remove(guestComparison);
+            }
+            _databaseContext.SaveChanges();
         }
     }
 }

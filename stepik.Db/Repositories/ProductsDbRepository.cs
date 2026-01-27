@@ -12,7 +12,7 @@ namespace stepik.Db.Repositories
             _databaseContext = databaseContext;
         }
 
-        public List<Product> GetAll() => _databaseContext.Products.ToList();
+        public List<Product> GetAll() => _databaseContext.Products.OrderBy(p => p.Id).ToList();
 
         public Product? TryGetById(int productId) => 
             _databaseContext.Products.FirstOrDefault(product => product.Id == productId);

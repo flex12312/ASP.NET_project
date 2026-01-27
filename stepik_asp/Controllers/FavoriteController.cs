@@ -6,7 +6,6 @@ using stepik_asp.Models;
 
 namespace stepik_asp.Controllers
 {
-    [Authorize]
     public class FavoriteController : Controller
     {
         private readonly IFavoritesRepository _favoritesRepository;
@@ -18,32 +17,51 @@ namespace stepik_asp.Controllers
             _productsRepository = productsRepository;
         }
 
+        private (string? userId, string? guestId) GetUserIdentifiers()
+        {
+            string? userId = User.Identity.IsAuthenticated ? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value : null;
+            string? guestId = Request.Cookies["GuestId"];
+            if (userId == null && guestId == null)
+            {
+                guestId = Guid.NewGuid().ToString();
+                Response.Cookies.Append("GuestId", guestId, new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddHours(8)
+                });
+            }
+            return (userId, guestId);
+        }
+
         public IActionResult Index()
         {
-            var favorite = _favoritesRepository.TryGetByUserId(Constants.UserId);
+            var(userId, guestId) = GetUserIdentifiers();
+            var favorite = _favoritesRepository.TryGetByUserId(userId, guestId);
 
             return View(favorite.ToFavoriteViewModel());
         }
         public IActionResult Add(int productId)
         {
+            var (userId, guestId) = GetUserIdentifiers();
             var product = _productsRepository.TryGetById(productId);
             if (product == null)
             {
                 return RedirectToAction("Index","Home"); 
             }
             
-            _favoritesRepository.Add(product, Constants.UserId);
+            _favoritesRepository.Add(product, userId, guestId);
             return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Delete(int productId)
         {
-            _favoritesRepository.Delete(productId,Constants.UserId);
+            var (userId, guestId) = GetUserIdentifiers();
+            _favoritesRepository.Delete(productId, userId, guestId);
             return RedirectToAction("Index");
         }
         public IActionResult Clear()
         {
-            _favoritesRepository.Clear(Constants.UserId);
+            var (userId, guestId) = GetUserIdentifiers();
+            _favoritesRepository.Clear(userId, guestId);
             return RedirectToAction("Index");
         }
     }
