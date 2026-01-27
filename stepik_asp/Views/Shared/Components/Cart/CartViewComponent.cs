@@ -11,9 +11,10 @@ namespace stepik_asp.Views.Shared.Components.Cart
 
         public IViewComponentResult Invoke()
         {
-            var cart = _cartsRepository.TryGetByUserId(Constants.UserId);
+            string? userId = User.Identity.IsAuthenticated ? UserClaimsPrincipal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value : null;
+            string? guestId = Request.Cookies["GuestId"];
+            var cart = _cartsRepository.TryGetByUserId(userId, guestId);
             var productsCount = cart?.ToCartViewModel()?.Quantity ?? 0;
-
             return View("Cart", productsCount);
         }
 

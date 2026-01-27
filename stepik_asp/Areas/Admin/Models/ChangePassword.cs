@@ -5,13 +5,10 @@ namespace stepik_asp.Areas.Admin.Models
 {
     public class ChangePassword
     {
-        [Display(Name = "Логин", Prompt = "Ваш логин")]
+        [Display(Name = "Логин", Prompt = "Логин пользователя")]
         [Required(ErrorMessage = "Не указан логин")]
-        [DataType(DataType.EmailAddress)]
-        [EmailAddress(ErrorMessage = "Введите валидный email")]
-        [StringLength(30, MinimumLength = 5, ErrorMessage = "Логин должен быть от {2} до {1} символов")]
-        [AllowNull]
-        public string Login { get; set; }
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "Логин должен быть от {2} до {1} символов")]
+        public string Login { get; set; } = string.Empty;  
 
 
         [Display(Name = "Пароль", Prompt = "Ваш пароль")]

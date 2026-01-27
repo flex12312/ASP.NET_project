@@ -9,10 +9,11 @@ namespace stepik.Db.Interfaces
 {
     public interface ICartsRepository
     {
-        void Add(Product product, string userId);
-        Cart? TryGetByUserId(string userId);
-        void Decrease(int productId, string userId);
-        void Clear(string userId);
+        void Add(Product product, string? userId, string? guestId);
+        Cart? TryGetByUserId(string? userId, string? guestId = null);
+        void Decrease(int productId, string? userId, string? guestId);
+        void Clear(string? userId, string? guestId);
+        public void Merge(string guestId, string userId);
     }
 
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using stepik.Db.Interfaces;
 using stepik.Db.Models;
+using stepik.Db.Repositories;
 using stepik_asp.Models;
 
 namespace stepik_asp.Controllers
@@ -9,11 +11,13 @@ namespace stepik_asp.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly ICartsRepository _cartsRepository;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager,SignInManager<User> signInManager,ICartsRepository cartsRepository) 
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _cartsRepository = cartsRepository;
         }
 
         public IActionResult Autorization(string returnUrl)
@@ -39,7 +43,15 @@ namespace stepik_asp.Controllers
                     false);
 
                 if (result.Succeeded)
+                {
+                    string guestId = Request.Cookies["GuestId"];
+                    if (!string.IsNullOrEmpty(guestId))
+                    {
+                        _cartsRepository.Merge(guestId, user.Id); 
+                        Response.Cookies.Delete("GuestId");       
+                    }
                     return Redirect(model.ReturnUrl ?? "/");
+                }
             }
 
             ModelState.AddModelError("", "Неверный логин или пароль");
@@ -97,6 +109,12 @@ namespace stepik_asp.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    string guestId = Request.Cookies["GuestId"];
+                    if (!string.IsNullOrEmpty(guestId))
+                    {
+                        _cartsRepository.Merge(guestId, user.Id);
+                        Response.Cookies.Delete("GuestId");
+                    }
                     return Redirect(model.ReturnUrl ?? "/Home");
                 }
                 foreach (var error in result.Errors)

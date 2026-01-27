@@ -18,63 +18,53 @@ namespace stepik.Db.Repositories
             _databaseContext = databaseContext;
         }
 
-        public Cart? TryGetByUserId(string userId)
+        public Cart? TryGetByUserId(string? userId, string? guestId)
         {
-            return _databaseContext.Carts.Include(x => x.Items)
-                .ThenInclude(x => x.Product).FirstOrDefault(x => x.UserId == userId);
+            return _databaseContext.Carts
+                .Include(x => x.Items)
+                .ThenInclude(x => x.Product)
+                .FirstOrDefault(x => (userId != null && x.UserId == userId) ||
+                                     (guestId != null && x.GuestId == guestId));
         }
 
-        public void Add(Product product, string userId)
+        public void Add(Product product, string? userId, string? guestId)
         {
-            var existingCart = TryGetByUserId(userId);
+            var existingCart = TryGetByUserId(userId, guestId);
 
             if (existingCart == null)
             {
                 existingCart = new Cart()
                 {
                     UserId = userId,
+                    GuestId = userId == null ? guestId : null, 
                     Items = new List<CartItem>()
-                };
-
-                existingCart.Items = new List<CartItem>()
-                    {
-                        new CartItem()
-                        {
-                            Product = product,
-                            Quantity = 1,
-                            Cart = existingCart
-                        }
-
                 };
                 _databaseContext.Carts.Add(existingCart);
             }
+
+            var existingCartItem = existingCart.Items
+                .FirstOrDefault(item => item.Product.Id == product.Id);
+
+            if (existingCartItem == null)
+            {
+                existingCart.Items.Add(new CartItem
+                {
+                    Product = product,
+                    Quantity = 1,
+                    Cart = existingCart
+                });
+            }
             else
             {
-                var existingCartItem = existingCart.Items
-                    .FirstOrDefault(item => item.Product.Id == product.Id);
-
-                if (existingCartItem == null)
-                {
-                    var newCartItem = new CartItem()
-                    {
-                        Product = product,
-                        Quantity = 1,
-                        Cart = existingCart
-                    };
-                    existingCart.Items.Add(newCartItem);
-                }
-                else
-                {
-                    existingCartItem.Quantity++;
-                }
+                existingCartItem.Quantity++;
             }
 
-            _databaseContext.SaveChanges();  
+            _databaseContext.SaveChanges();
         }
 
-        public void Decrease(int productId, string userId)
+        public void Decrease(int productId, string? userId, string? guestId)
         {
-            var existingCart = TryGetByUserId(userId);
+            var existingCart = TryGetByUserId(userId, guestId);
 
             var existingCartItem = existingCart?.Items
                 .FirstOrDefault(item => item.Product.Id == productId);
@@ -94,9 +84,9 @@ namespace stepik.Db.Repositories
             _databaseContext.SaveChanges();  
         }
 
-        public void Clear(string userId)
+        public void Clear(string? userId, string? guestId)
         {
-            var existingCart = TryGetByUserId(userId);
+            var existingCart = TryGetByUserId(userId, guestId);
 
             if (existingCart != null)
             {
@@ -104,6 +94,40 @@ namespace stepik.Db.Repositories
 
                 _databaseContext.SaveChanges(); 
             }
+        }
+        public void Merge(string guestId, string userId)
+        {
+            var guestCart = _databaseContext.Carts
+                .Include(x => x.Items)
+                .FirstOrDefault(x => x.GuestId == guestId);
+            var userCart = _databaseContext.Carts
+                .Include(x => x.Items)
+                .FirstOrDefault(x => x.UserId == userId);
+            if (guestCart == null) return; 
+            if (userCart == null)
+            {
+                guestCart.UserId = userId;
+                guestCart.GuestId = null;
+            }
+            else
+            {
+                foreach (var guestItem in guestCart.Items)
+                {
+                    var userItem = userCart.Items
+                        .FirstOrDefault(x => x.Product.Id == guestItem.Product.Id);
+                    if (userItem != null)
+                    {
+                        userItem.Quantity += guestItem.Quantity;
+                    }
+                    else
+                    {
+                        guestItem.Cart = userCart;
+                        userCart.Items.Add(guestItem);
+                    }
+                }
+                _databaseContext.Carts.Remove(guestCart);
+            }
+            _databaseContext.SaveChanges();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace stepik_asp.Controllers
         }
         public IActionResult Index()
         {
-            var cart = _cartsRepository.TryGetByUserId(Constants.UserId);
+            var cart = _cartsRepository.TryGetByUserId(Constants.UserId, null);
 
             var order = new OrderViewModel()
             {
@@ -34,7 +34,7 @@ namespace stepik_asp.Controllers
         [HttpPost]
         public IActionResult Buy(OrderViewModel order)
         {
-            var cart = _cartsRepository.TryGetByUserId(Constants.UserId);
+            var cart = _cartsRepository.TryGetByUserId(Constants.UserId, null);
 
             if (cart == null)
             {
@@ -71,7 +71,7 @@ namespace stepik_asp.Controllers
             };
 
             _ordersRepository.Add(orderDb);
-            _cartsRepository.Clear(Constants.UserId);
+            _cartsRepository.Clear(Constants.UserId, null);
 
             return RedirectToAction(nameof(Success));
         }

@@ -28,12 +28,10 @@
                 <textarea class="form-control" asp-for="Description">@Model.Description</textarea>
                 <span asp-validation-for="Description"></span>
             </p>
-
             <p>
                 <label class="form-label" asp-for="ImagePath"></label><br />
                 <input class="form-control"
                        asp-for="ImagePath"
-                       value="@Model.ImagePath"
                        placeholder="https://example.com/image.jpg" />
                 <span asp-validation-for="ImagePath"></span>
             </p>
