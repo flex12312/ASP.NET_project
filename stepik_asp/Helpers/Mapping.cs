@@ -10,14 +10,7 @@ namespace stepik_asp.Helpers
         #region Product
         public static List<ProductViewModel> ToProductViewModels(this List<Product> productsDb)
         {
-            var productsViewModel = new List<ProductViewModel>();
-
-            foreach (var productDb in productsDb)
-            {
-                productsViewModel.Add(productDb.ToProductViewModel());
-            }
-
-            return productsViewModel;
+            return productsDb.Select(p => p.ToProductViewModel()).ToList();
         }
 
         public static ProductViewModel ToProductViewModel(this Product productDb)
@@ -48,14 +41,7 @@ namespace stepik_asp.Helpers
         #region Cart
         public static List<CartItemViewModel> ToCartItemViewModels(this List<CartItem> cartDbItems)
         {
-            var cartItemsViewModel = new List<CartItemViewModel>();
-
-            foreach (var cartDbItem in cartDbItems)
-            {
-                cartItemsViewModel.Add(cartDbItem.ToCartItemViewModel());
-            }
-
-            return cartItemsViewModel;
+            return cartDbItems.Select(p => p.ToCartItemViewModel()).ToList();
         }
 
         public static CartItemViewModel ToCartItemViewModel(this CartItem cartDbItem)
@@ -137,14 +123,7 @@ namespace stepik_asp.Helpers
         }
         public static List<OrderViewModel> ToOrderViewModels(this List<Order> ordersDb)
         {
-            var ordersViewModel = new List<OrderViewModel>();
-
-            foreach (var orderDb in ordersDb)
-            {
-                ordersViewModel.Add(orderDb.ToOrderViewModel());
-            }
-
-            return ordersViewModel;
+            return ordersDb.Select(p => p.ToOrderViewModel()).ToList();
         }
 
 

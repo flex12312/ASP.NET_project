@@ -8,7 +8,7 @@
     <h2 class="row-title">Добавление нового товара</h2>
 </div>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <div class="row justify-content-center mt-3">
         <div class="col-6 mb-3">
             <div class="text-danger fw-bold text-uppercase" asp-validation-summary="All"></div>
@@ -29,14 +29,23 @@
             </p>
 
             <p>
-                <label class="form-label" asp-for="ImagePath"></label><br />
-                <input class="form-control"
-                       asp-for="ImagePath"
-                       placeholder="https://example.com/image.jpg" />
-                <span asp-validation-for="ImagePath"></span>
-                <small class="text-muted">
-                    Вставьте ссылку на изображение из интернета
-                </small>
+                <label class="form-label">Текущее изображение:</label><br />
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <div class="mb-3">
+                        <img src="@Model.ImagePath" alt="Product Image"
+                             style="width: 200px; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted mb-3">Изображение не установлено</div>
+                }
+                <label class="form-label" asp-for="ImagePath">Изменить ссылку:</label><br />
+                <input class="form-control mb-2" asp-for="ImagePath" />
+
+                <label class="form-label">Или загрузить новый файл:</label>
+                <input type="file" asp-for="ImageFile" id="imageInput" class="form-control" accept="image/*" />
             </p>
         </div>
     </div>

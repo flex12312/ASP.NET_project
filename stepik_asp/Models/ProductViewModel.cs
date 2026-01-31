@@ -27,6 +27,10 @@ namespace stepik_asp.Models
         [Display(Name = "Ссылка на изображение")]
         public string? ImagePath { get; set; }
 
+        [Display(Name = "Загрузить файл")]
+        [ValidateNever]
+        public IFormFile? ImageFile { get; set; }
+
         public ProductViewModel() { }
 
         public ProductViewModel(int id, string name, decimal cost, string? description,string imagePath)
