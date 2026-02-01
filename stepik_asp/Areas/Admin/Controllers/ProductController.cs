@@ -31,7 +31,7 @@ namespace stepik_asp.Areas.AdminPanel.Controllers
         
         public IActionResult AddProduct()
         {
-            return View();
+            return View(new ProductViewModel());
         }
         [HttpPost]
         public async Task<IActionResult> AddProduct(ProductViewModel product)
